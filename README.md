@@ -6,7 +6,7 @@
 ## 🌐 ลิงก์เล่นเกม (Playable Links)
 
 - **ลิงก์เล่นจากเครื่องคุณ (Local):** 👉 **[http://localhost:3000](http://localhost:3000)**
-- **ลิงก์สาธารณะให้คนนอก / เพื่อนเล่นได้ (Public Live):** 👉 **[https://calling-fold-determines-territory.trycloudflare.com](https://calling-fold-determines-territory.trycloudflare.com)**
+- **ลิงก์สาธารณะให้คนนอก / เพื่อนเล่นได้ (Public Live):** 👉 **(https://lnwzavbvb-tech.github.io/My-game/)**
 
 ---
 
