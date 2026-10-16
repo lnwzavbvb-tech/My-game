@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="th">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>COUNTER / ARENA - Combo Command & Consecutive Attacks Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <header>
+            <div>
+                <small>COMBAT PROTOTYPE / 02 • UNCHAINED BATTLE</small>
+                <h1>COUNTER<span> / </span>ARENA</h1>
+            </div>
+            <div class="score">
+                ACTION SCORE
+                <strong id="score">0</strong>
+            </div>
+        </header>
+
+        <section class="arena">
+            <canvas id="game" width="1200" height="650"></canvas>
+
+            <!-- Enemy HUD -->
+            <div class="enemy-hud">
+                <div class="label">IRON WARDEN <span>LV. 02</span></div>
+                <div class="bar"><i id="enemyHP"></i></div>
+                <small id="enemyText">320 / 320</small>
+            </div>
+
+            <!-- Phase & Chain Indicator -->
+            <div class="phase">
+                <span id="phase">READY TO FIGHT</span>
+                <span id="chainBadge" class="chain-badge" style="display: none;">COMBO 1/2</span>
+                <p id="hint">คลิกซ้าย/ขวา ผสมคอมโบโจมตีได้ตลอดเวลา • บอสสามารถโจมตีต่อเนื่องเป็นชุด!</p>
+            </div>
+
+            <!-- Command Chain Visual Display -->
+            <div id="commandChain" class="command-chain-hud">
+                <span class="cmd-badge light">LMB</span>
+                <span class="cmd-arrow">➔</span>
+                <span class="cmd-badge heavy">RMB</span>
+                <span id="cmdName" class="cmd-name">RISING FALCON CLEAVE</span>
+            </div>
+
+            <!-- Player HUD -->
+            <div class="player-hud">
+                <div class="label">PLAYER <span id="playerText">100 / 100</span></div>
+                <div class="bar player"><i id="playerHP"></i></div>
+                <div class="bar stamina"><i id="stamina"></i></div>
+                <small id="staminaText">STAMINA 100 / 100</small>
+                <div class="bar energy"><i id="energy"></i></div>
+                <small id="energyText">ULTIMATE 0 / 100</small>
+            </div>
+
+            <!-- Start / Result Overlay -->
+            <div id="overlay">
+                <small>STAND YOUR GROUND • COMBO & CONSECUTIVE STRIKES</small>
+                <h2 id="result">Every strike.<br>A decision.</h2>
+                <p id="intro">
+                    ⚔️ <strong>ระบบคอมมานใหม่:</strong> สามารถโจมตีได้ตลอดเวลา แม้บอสจะกำลังง้างโจมตีก็ไม่ถูกล็อกปุ่ม!<br>
+                    🖱️ <strong>คลิกซ้าย (ฟันเบา) / คลิกขวา (ฟันหนัก):</strong> กดผสมคอมโบ เช่น [ซ้าย ➔ ขวา], [ซ้าย ➔ ซ้าย ➔ ขวา]<br>
+                    ⚡ <strong>บอสโจมตีต่อเนื่องเป็นชุด (Consecutive Combos):</strong> อ่านจังหวะแสงสีฟ้า (แพรี่) และแสงส้ม (หลบ) ติดต่อกัน!
+                </p>
+                <button id="start">START BATTLE →</button>
+            </div>
+        </section>
+
+        <!-- Action Controls -->
+        <section class="controls" id="controls"></section>
+
+        <!-- Footer Log -->
+        <footer>
+            <span>🖱️ คลิกซ้าย: ฟันเบา | 🖱️ คลิกขวา: ฟันหนัก/แทง | Shift: หลบ | E: แพรี่</span>
+            <span id="log">พร้อมเริ่มการต่อสู้</span>
+        </footer>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
