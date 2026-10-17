@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>COUNTER / ARENA - Combo Command & Consecutive Attacks Edition</title>
+    <title>COUNTER / ARENA - Stage Exploration & Battle Cut Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main>
         <header>
             <div>
-                <small>COMBAT PROTOTYPE / 02 • UNCHAINED BATTLE</small>
+                <small>COMBAT PROTOTYPE / 03 • STAGE EXPLORATION & BATTLE</small>
                 <h1>COUNTER<span> / </span>ARENA</h1>
             </div>
             <div class="score">
@@ -22,21 +22,33 @@
         <section class="arena">
             <canvas id="game" width="1200" height="650"></canvas>
 
-            <!-- Enemy HUD -->
-            <div class="enemy-hud">
-                <div class="label">IRON WARDEN <span>LV. 02</span></div>
+            <!-- Stage Exploration HUD -->
+            <div id="stageHud" class="stage-hud" style="display: none;">
+                <span class="stage-title">SECTOR 07 • RUINED CYBER GRID</span>
+                <span id="targetCounter" class="stage-targets">TARGETS: 3 REMAINING</span>
+            </div>
+
+            <!-- Cinematic Encounter Transition Overlay -->
+            <div id="transitionBanner" class="transition-banner" style="display: none;">
+                <div class="transition-title">⚔️ ENCOUNTER! ⚔️</div>
+                <div id="transitionEnemyName" class="transition-sub">ENGAGING TARGET</div>
+            </div>
+
+            <!-- Enemy HUD (Battle Mode) -->
+            <div id="enemyHud" class="enemy-hud" style="display: none;">
+                <div class="label"><span id="enemyLabelName">IRON WARDEN</span> <span id="enemyLv">LV. 02</span></div>
                 <div class="bar"><i id="enemyHP"></i></div>
                 <small id="enemyText">320 / 320</small>
             </div>
 
-            <!-- Phase & Chain Indicator -->
-            <div class="phase">
+            <!-- Phase & Chain Indicator (Battle Mode) -->
+            <div id="phaseContainer" class="phase" style="display: none;">
                 <span id="phase">READY TO FIGHT</span>
                 <span id="chainBadge" class="chain-badge" style="display: none;">COMBO 1/2</span>
-                <p id="hint">คลิกซ้าย/ขวา ผสมคอมโบโจมตีได้ตลอดเวลา • บอสสามารถโจมตีต่อเนื่องเป็นชุด!</p>
+                <p id="hint">คลิกซ้าย/ขวา ผสมคอมโบโจมตี • บอสโจมตีต่อเนื่องเป็นชุด!</p>
             </div>
 
-            <!-- Command Chain Visual Display -->
+            <!-- Command Chain Visual Display (Battle Mode) -->
             <div id="commandChain" class="command-chain-hud">
                 <span class="cmd-badge light">LMB</span>
                 <span class="cmd-arrow">➔</span>
@@ -45,7 +57,7 @@
             </div>
 
             <!-- Player HUD -->
-            <div class="player-hud">
+            <div id="playerHud" class="player-hud">
                 <div class="label">PLAYER <span id="playerText">100 / 100</span></div>
                 <div class="bar player"><i id="playerHP"></i></div>
                 <div class="bar stamina"><i id="stamina"></i></div>
@@ -56,14 +68,14 @@
 
             <!-- Start / Result Overlay -->
             <div id="overlay">
-                <small>STAND YOUR GROUND • COMBO & CONSECUTIVE STRIKES</small>
+                <small>SECTOR 07 • EXPLORATION & BATTLE SYSTEM</small>
                 <h2 id="result">Every strike.<br>A decision.</h2>
                 <p id="intro">
-                    ⚔️ <strong>ระบบคอมมานใหม่:</strong> สามารถโจมตีได้ตลอดเวลา แม้บอสจะกำลังง้างโจมตีก็ไม่ถูกล็อกปุ่ม!<br>
-                    🖱️ <strong>คลิกซ้าย (ฟันเบา) / คลิกขวา (ฟันหนัก):</strong> กดผสมคอมโบ เช่น [ซ้าย ➔ ขวา], [ซ้าย ➔ ซ้าย ➔ ขวา]<br>
-                    ⚡ <strong>บอสโจมตีต่อเนื่องเป็นชุด (Consecutive Combos):</strong> อ่านจังหวะแสงสีฟ้า (แพรี่) และแสงส้ม (หลบ) ติดต่อกัน!
+                    🗺️ <strong>ระบบเดินฉากในด่าน:</strong> ใช้ปุ่ม [W A S D] เดินสำรวจด่านขนาดเล็ก เก็บกล่องพยาบาลและพลังงาน<br>
+                    ⚔️ <strong>ระบบตัดเข้าฉากต่อสู้:</strong> เมื่อเดินชนศัตรู/บอสในฉาก จะตัดเข้าสู่สังเวียนการต่อสู้อย่างดุเดือดทันที!<br>
+                    🖱️ <strong>ระบบคอมโบ:</strong> คลิกซ้าย (ฟันเบา) / คลิกขวา (ฟันหนัก) สวนกลับบอสที่โจมตีต่อเนื่องเป็นชุด!
                 </p>
-                <button id="start">START BATTLE →</button>
+                <button id="start">ENTER SECTOR 07 →</button>
             </div>
         </section>
 
@@ -72,8 +84,8 @@
 
         <!-- Footer Log -->
         <footer>
-            <span>🖱️ คลิกซ้าย: ฟันเบา | 🖱️ คลิกขวา: ฟันหนัก/แทง | Shift: หลบ | E: แพรี่</span>
-            <span id="log">พร้อมเริ่มการต่อสู้</span>
+            <span id="controlsFooterHint">🗺️ [W A S D]: เดินสำรวจด่าน | [Shift / Space]: สปรินต์ | เดินชนศัตรูเพื่อเริ่มการต่อสู้</span>
+            <span id="log">พร้อมเริ่มการสำรวจ</span>
         </footer>
     </main>
 
