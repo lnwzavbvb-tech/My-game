@@ -1,94 +1,50 @@
 <!doctype html>
 <html lang="th">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>COUNTER / ARENA - Stage Exploration & Battle Cut Edition</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d15">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <title>COUNTER / ARENA — Team Playtest</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#080d15;color:#ecf7f6;font-family:system-ui,sans-serif;overflow:hidden}
+    body{display:flex;flex-direction:column}main{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}
+    canvas{position:absolute;inset:0;display:block;width:100%;height:100%;outline:none;background:#080d15}
+    footer{height:40px;flex-shrink:0;display:flex;align-items:center;gap:16px;padding:0 18px;background:#0d1722;font-size:12px;color:#9fb6c4}
+    footer strong{color:#63edd2}button,a{color:#63edd2;font:inherit}button{background:transparent;border:1px solid #344c5c;padding:4px 10px;cursor:pointer}a{text-decoration:none}#spacer{flex:1}
+    #loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;background:#080d15;gap:14px}
+    #loading h1{font-size:clamp(24px,5vw,52px);color:#63edd2;letter-spacing:2px;margin:0}progress{width:min(400px,80vw);height:12px;accent-color:#63edd2;margin:auto}
+    #notice{white-space:pre-wrap;max-width:680px;padding:20px;line-height:1.6}#outdated{display:none;color:#ffcb71}
+  </style>
 </head>
 <body>
-    <main>
-        <header>
-            <div>
-                <small>COMBAT PROTOTYPE / 03 • STAGE EXPLORATION & BATTLE</small>
-                <h1>COUNTER<span> / </span>ARENA</h1>
-            </div>
-            <div class="score">
-                ACTION SCORE
-                <strong id="score">0</strong>
-            </div>
-        </header>
-
-        <section class="arena">
-            <canvas id="game" width="1200" height="650"></canvas>
-
-            <!-- Stage Exploration HUD -->
-            <div id="stageHud" class="stage-hud" style="display: none;">
-                <span class="stage-title">SECTOR 07 • RUINED CYBER GRID</span>
-                <span id="targetCounter" class="stage-targets">TARGETS: 3 REMAINING</span>
-            </div>
-
-            <!-- Cinematic Encounter Transition Overlay -->
-            <div id="transitionBanner" class="transition-banner" style="display: none;">
-                <div class="transition-title">⚔️ ENCOUNTER! ⚔️</div>
-                <div id="transitionEnemyName" class="transition-sub">ENGAGING TARGET</div>
-            </div>
-
-            <!-- Enemy HUD (Battle Mode) -->
-            <div id="enemyHud" class="enemy-hud" style="display: none;">
-                <div class="label"><span id="enemyLabelName">IRON WARDEN</span> <span id="enemyLv">LV. 02</span></div>
-                <div class="bar"><i id="enemyHP"></i></div>
-                <small id="enemyText">320 / 320</small>
-            </div>
-
-            <!-- Phase & Chain Indicator (Battle Mode) -->
-            <div id="phaseContainer" class="phase" style="display: none;">
-                <span id="phase">READY TO FIGHT</span>
-                <span id="chainBadge" class="chain-badge" style="display: none;">COMBO 1/2</span>
-                <p id="hint">คลิกซ้าย/ขวา ผสมคอมโบโจมตี • บอสโจมตีต่อเนื่องเป็นชุด!</p>
-            </div>
-
-            <!-- Command Chain Visual Display (Battle Mode) -->
-            <div id="commandChain" class="command-chain-hud">
-                <span class="cmd-badge light">LMB</span>
-                <span class="cmd-arrow">➔</span>
-                <span class="cmd-badge heavy">RMB</span>
-                <span id="cmdName" class="cmd-name">RISING FALCON CLEAVE</span>
-            </div>
-
-            <!-- Player HUD -->
-            <div id="playerHud" class="player-hud">
-                <div class="label">PLAYER <span id="playerText">100 / 100</span></div>
-                <div class="bar player"><i id="playerHP"></i></div>
-                <div class="bar stamina"><i id="stamina"></i></div>
-                <small id="staminaText">STAMINA 100 / 100</small>
-                <div class="bar energy"><i id="energy"></i></div>
-                <small id="energyText">ULTIMATE 0 / 100</small>
-            </div>
-
-            <!-- Start / Result Overlay -->
-            <div id="overlay">
-                <small>SECTOR 07 • EXPLORATION & BATTLE SYSTEM</small>
-                <h2 id="result">Every strike.<br>A decision.</h2>
-                <p id="intro">
-                    🗺️ <strong>ระบบเดินฉากในด่าน:</strong> ใช้ปุ่ม [W A S D] เดินสำรวจด่านขนาดเล็ก เก็บกล่องพยาบาลและพลังงาน<br>
-                    ⚔️ <strong>ระบบตัดเข้าฉากต่อสู้:</strong> เมื่อเดินชนศัตรู/บอสในฉาก จะตัดเข้าสู่สังเวียนการต่อสู้อย่างดุเดือดทันที!<br>
-                    🖱️ <strong>ระบบคอมโบ:</strong> คลิกซ้าย (ฟันเบา) / คลิกขวา (ฟันหนัก) สวนกลับบอสที่โจมตีต่อเนื่องเป็นชุด!
-                </p>
-                <button id="start">ENTER SECTOR 07 →</button>
-            </div>
-        </section>
-
-        <!-- Action Controls -->
-        <section class="controls" id="controls"></section>
-
-        <!-- Footer Log -->
-        <footer>
-            <span id="controlsFooterHint">🗺️ [W A S D]: เดินสำรวจด่าน | [Shift / Space]: สปรินต์ | เดินชนศัตรูเพื่อเริ่มการต่อสู้</span>
-            <span id="log">พร้อมเริ่มการสำรวจ</span>
-        </footer>
-    </main>
-
-    <script src="game.js"></script>
+  <main>
+    <canvas id="game" width="1600" height="900" tabindex="0" aria-label="Counter Arena game"></canvas>
+    <div id="loading"><h1>COUNTER / ARENA</h1><div>กำลังโหลดเกมสำหรับทีมทดสอบ</div><progress id="progress" max="1" value="0"></progress><div id="notice"></div></div>
+  </main>
+  <footer><strong>TEAM PLAYTEST</strong><span id="version">0.2.1-pixel-restart-fix.20261024123000</span><span id="outdated">มีเวอร์ชันใหม่ — รีเฟรชเพื่ออัปเดต</span><span id="spacer"></span><a href="https://github.com/lnwzavbvb-tech/My-game/issues/new" target="_blank" rel="noopener">แจ้งบั๊ก</a><button id="reload">โหลดรุ่นล่าสุด</button><button id="fullscreen">เต็มจอ</button></footer>
+  <script>
+    const canvas=document.getElementById('game'),loading=document.getElementById('loading'),notice=document.getElementById('notice');
+    const version='0.2.1-pixel-restart-fix.20261024123000';let game;
+    canvas.addEventListener('contextmenu',event=>event.preventDefault());
+    document.getElementById('reload').onclick=()=>location.replace(location.pathname+'?v='+Date.now());
+    document.getElementById('fullscreen').onclick=()=>{if(game)game.SetFullscreen(1)};
+    function fail(message){loading.style.display='grid';notice.textContent=message;document.getElementById('progress').hidden=true}
+    const config={
+      dataUrl:'Build/1dbe267e9aad7bba1a35906aea4d3e3c.data',frameworkUrl:'Build/a3e98c8af91c6fc5036f5b3bd22b9cc9.framework.js',codeUrl:'Build/6734ce75621d8c41712949e7912456da.wasm',streamingAssetsUrl:'StreamingAssets',
+      companyName:"Counter Arena",productName:"Counter Arena",productVersion:version,
+      matchWebGLToCanvasSize:true,devicePixelRatio:Math.min(window.devicePixelRatio||1,2),
+      showBanner:(message,type)=>{if(type==='error')fail(message)},
+      errorHandler:message=>{fail(message);return true}
+    };
+    const loader=document.createElement('script');loader.src='Build/98397cec96abe6534a4a638f6b4f95c9.loader.js';
+    loader.onerror=()=>fail('โหลดเกมไม่สำเร็จ กรุณาลองรีเฟรชอีกครั้ง');
+    loader.onload=()=>createUnityInstance(canvas,config,p=>document.getElementById('progress').value=p).then(instance=>{
+      game=instance;loading.style.display='none';canvas.focus();window.arenaGame=instance;
+    }).catch(error=>fail(String(error)));
+    document.body.appendChild(loader);
+    async function checkVersion(){try{const response=await fetch('build-info.json?t='+Date.now(),{cache:'no-store'});if(!response.ok)return;const info=await response.json();if(info.version!==version)document.getElementById('outdated').style.display='inline'}catch{}}
+    setInterval(checkVersion,60000);
+  </script>
 </body>
 </html>

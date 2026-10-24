@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DefineConstants>ARENA_STANDALONE_VALIDATION</DefineConstants>
+    <UnityData Condition="'$(UnityData)' == ''">C:/Program Files/Unity/Hub/Editor/6000.6.2f1/Editor/Data</UnityData>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(UnityData)/Managed/UnityEditor.dll" />
+    <Reference Include="$(UnityData)/Managed/UnityEngine.dll" />
+    <Compile Include="../../Assets/CounterArena/Scripts/*.cs" />
+    <Compile Include="../../Assets/CounterArena/Editor/*.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

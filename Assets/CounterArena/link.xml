@@ -1,0 +1,5 @@
+<linker>
+  <!-- Unity 6.6 invokes this module from its native player loop. The callback
+       must remain available even when no gameplay script directly calls it. -->
+  <assembly fullname="UnityEngine.ContentLoadModule" preserve="all" />
+</linker>

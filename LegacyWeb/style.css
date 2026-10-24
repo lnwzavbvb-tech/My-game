@@ -1,0 +1,511 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Orbitron:wght@600;800;900&display=swap');
+
+:root {
+    color-scheme: dark;
+    font-family: 'IBM Plex Sans Thai', system-ui, -apple-system, sans-serif;
+    color: #e9eef4;
+    background: #090d14;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    background: #090d14;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    max-width: 1240px;
+    width: 100%;
+    margin: auto;
+    padding: 16px 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+small {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    color: #8a9aac;
+    font-weight: 600;
+}
+
+h1 {
+    font-family: 'Orbitron', 'IBM Plex Sans Thai', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 3px 0 0 0;
+    letter-spacing: 3px;
+    color: #ffffff;
+}
+
+h1 span {
+    color: #63edd2;
+    text-shadow: 0 0 12px rgba(99, 237, 210, 0.4);
+}
+
+.score {
+    font-size: 11px;
+    color: #8a9aac;
+    letter-spacing: 2px;
+    text-align: right;
+    font-weight: 600;
+}
+
+.score strong {
+    display: block;
+    font-family: 'Orbitron', monospace;
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* --- ARENA / STAGE CONTAINER --- */
+.arena {
+    position: relative;
+    border: 1px solid #283644;
+    overflow: hidden;
+    background: #101923;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 40px rgba(0, 0, 0, 0.4);
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1200 / 650;
+    background: transparent;
+    cursor: crosshair;
+}
+
+/* --- STAGE EXPLORATION HUD --- */
+.stage-hud {
+    position: absolute;
+    top: 16px;
+    left: 20%;
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(13, 22, 35, 0.85);
+    border: 1px solid rgba(99, 237, 210, 0.4);
+    border-radius: 6px;
+    padding: 8px 18px;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    transition: all 0.25s ease;
+}
+
+.stage-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #63edd2;
+    text-shadow: 0 0 10px rgba(99, 237, 210, 0.4);
+}
+
+.stage-targets {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ff655f;
+    letter-spacing: 1.5px;
+    background: rgba(255, 101, 95, 0.15);
+    border: 1px solid rgba(255, 101, 95, 0.4);
+    padding: 3px 9px;
+    border-radius: 4px;
+}
+
+/* --- BATTLE ENCOUNTER TRANSITION OVERLAY --- */
+.transition-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 25;
+    animation: zoomAlert 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes zoomAlert {
+    from { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.transition-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    color: #ff3366;
+    text-shadow: 0 0 30px #ff0055, 0 0 60px #ff0055;
+}
+
+.transition-sub {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 4px;
+    margin-top: 10px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+/* Enemy HUD */
+.enemy-hud {
+    position: absolute;
+    top: 18px;
+    left: 26%;
+    width: 48%;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.label span {
+    color: #9aa9b8;
+}
+
+.bar {
+    height: 9px;
+    background: #24313d;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.bar i {
+    display: block;
+    height: 100%;
+    background: #ff655f;
+    width: 100%;
+    transition: width 0.15s ease-out;
+    box-shadow: 0 0 8px #ff655f;
+}
+
+.enemy-hud small {
+    display: block;
+    text-align: right;
+    margin-top: 4px;
+    color: #8a9aac;
+    letter-spacing: 1px;
+    font-size: 10px;
+    font-family: 'Orbitron', monospace;
+}
+
+/* Phase & Chain Notice */
+.phase {
+    position: absolute;
+    top: 78px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.phase span {
+    font-family: 'Orbitron', 'IBM Plex Sans Thai', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: #f0c572;
+    text-shadow: 0 0 12px rgba(240, 197, 114, 0.5);
+}
+
+.chain-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(255, 101, 95, 0.2);
+    border: 1px solid #ff655f;
+    border-radius: 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    color: #ff655f;
+    letter-spacing: 1.5px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.phase p {
+    font-size: 13px;
+    color: #9aa9b8;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* --- PLAYER COMMAND CHAIN HUD --- */
+.command-chain-hud {
+    position: absolute;
+    top: 145px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    background: rgba(10, 20, 32, 0.8);
+    border: 1px solid rgba(99, 237, 210, 0.35);
+    padding: 6px 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.command-chain-hud.active {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.cmd-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.cmd-badge.light {
+    background: rgba(99, 237, 210, 0.2);
+    border: 1px solid #63edd2;
+    color: #63edd2;
+}
+
+.cmd-badge.heavy {
+    background: rgba(240, 197, 114, 0.2);
+    border: 1px solid #f0c572;
+    color: #f0c572;
+}
+
+.cmd-arrow {
+    color: #8a9aac;
+    font-size: 12px;
+}
+
+.cmd-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #ffffff;
+    margin-left: 6px;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Player HUD */
+.player-hud {
+    position: absolute;
+    bottom: 14px;
+    left: 33%;
+    width: 34%;
+    pointer-events: none;
+}
+
+.player i {
+    background: #63edd2;
+    box-shadow: 0 0 8px #63edd2;
+}
+
+.stamina {
+    height: 6px;
+    margin-top: 7px;
+}
+
+.stamina i {
+    background: #b5df78;
+    box-shadow: 0 0 6px #b5df78;
+}
+
+.energy {
+    height: 5px;
+    margin-top: 7px;
+}
+
+.energy i {
+    background: #f0c572;
+    width: 0%;
+    box-shadow: 0 0 8px #f0c572;
+}
+
+.player-hud small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #8a9aac;
+    margin-top: 3px;
+    font-family: 'Orbitron', monospace;
+}
+
+/* Overlay & Modals */
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(9, 13, 20, 0.92);
+    text-align: center;
+    backdrop-filter: blur(6px);
+    z-index: 30;
+}
+
+#overlay h2 {
+    font-family: 'Orbitron', 'IBM Plex Sans Thai', sans-serif;
+    font-size: clamp(24px, 4.5vw, 50px);
+    line-height: 1.15;
+    margin: 14px 0;
+    letter-spacing: 2px;
+    color: #ffffff;
+}
+
+#intro {
+    font-size: 13.5px;
+    color: #9aa9b8;
+    line-height: 1.8;
+    max-width: 650px;
+    margin-bottom: 8px;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+#start {
+    background: #63edd2;
+    border: 0;
+    padding: 13px 34px;
+    color: #091710;
+    font-weight: 700;
+    border-radius: 4px;
+    margin-top: 14px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(99, 237, 210, 0.4);
+    transition: all 0.2s;
+}
+
+#start:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 30px rgba(99, 237, 210, 0.7);
+    background: #7ef5dd;
+}
+
+/* Action Controls Bar */
+.controls {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.action {
+    background: #121b26;
+    border: 1px solid #2a3849;
+    color: #fff;
+    border-radius: 7px;
+    padding: 10px 8px;
+    text-align: left;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.action:hover:not(:disabled) {
+    border-color: #63edd2;
+    box-shadow: 0 0 12px rgba(99, 237, 210, 0.2);
+    transform: translateY(-2px);
+    background: #172433;
+}
+
+.action:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.action kbd {
+    display: inline-block;
+    background: #293747;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #63edd2;
+}
+
+.action b {
+    display: block;
+    font-size: 12.5px;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+.action small {
+    display: block;
+    letter-spacing: 0;
+    font-size: 9.5px;
+    color: #8a9aac;
+    margin-top: 3px;
+    line-height: 1.25;
+}
+
+.action:disabled {
+    opacity: 0.38;
+    cursor: default;
+    transform: none;
+    box-shadow: none;
+}
+
+footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    font-size: 11.5px;
+    color: #8190a2;
+    margin-top: 12px;
+    padding: 0 4px;
+}
+
+#log {
+    color: #63edd2;
+    font-weight: 600;
+}
+
+@media(max-width: 900px) {
+    main { padding: 10px; }
+    .controls { grid-template-columns: repeat(4, 1fr); }
+    .stage-hud { width: 85%; left: 7.5%; }
+    .phase { top: 55px; }
+    .phase p { display: none; }
+    .enemy-hud { top: 8px; width: 60%; left: 20%; }
+    .player-hud { bottom: 8px; width: 50%; left: 25%; }
+    footer { flex-direction: column; }
+    h1 { font-size: 18px; }
+}

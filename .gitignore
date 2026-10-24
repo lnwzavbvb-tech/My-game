@@ -2,3 +2,25 @@ cloudflared.exe
 git_bin/
 *.zip
 serve.ps1
+
+# Unity generated files
+/Library/
+/Temp/
+/Obj/
+/Logs/
+/UserSettings/
+/Builds/
+/Validation/
+/.vs/
+*.csproj
+*.sln
+*.slnx
+*.user
+*.pidb
+*.pdb
+*.opendb
+*.VC.db
+*.log
+/Tools/Validate/bin/
+/Tools/Validate/obj/
+!/Tools/Validate/Validate.csproj

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d15">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <title>COUNTER / ARENA — Team Playtest</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#080d15;color:#ecf7f6;font-family:system-ui,sans-serif;overflow:hidden}
+    body{display:flex;flex-direction:column}main{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}
+    canvas{position:absolute;inset:0;display:block;width:100%;height:100%;outline:none;background:#080d15}
+    footer{height:40px;flex-shrink:0;display:flex;align-items:center;gap:16px;padding:0 18px;background:#0d1722;font-size:12px;color:#9fb6c4}
+    footer strong{color:#63edd2}button,a{color:#63edd2;font:inherit}button{background:transparent;border:1px solid #344c5c;padding:4px 10px;cursor:pointer}a{text-decoration:none}#spacer{flex:1}
+    #loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;background:#080d15;gap:14px}
+    #loading h1{font-size:clamp(24px,5vw,52px);color:#63edd2;letter-spacing:2px;margin:0}progress{width:min(400px,80vw);height:12px;accent-color:#63edd2;margin:auto}
+    #notice{white-space:pre-wrap;max-width:680px;padding:20px;line-height:1.6}#outdated{display:none;color:#ffcb71}
+  </style>
+</head>
+<body>
+  <main>
+    <canvas id="game" width="1600" height="900" tabindex="0" aria-label="Counter Arena game"></canvas>
+    <div id="loading"><h1>COUNTER / ARENA</h1><div>กำลังโหลดเกมสำหรับทีมทดสอบ</div><progress id="progress" max="1" value="0"></progress><div id="notice"></div></div>
+  </main>
+  <footer><strong>TEAM PLAYTEST</strong><span id="version">{{{ PRODUCT_VERSION }}}</span><span id="outdated">มีเวอร์ชันใหม่ — รีเฟรชเพื่ออัปเดต</span><span id="spacer"></span><a href="https://github.com/lnwzavbvb-tech/My-game/issues/new" target="_blank" rel="noopener">แจ้งบั๊ก</a><button id="reload">โหลดรุ่นล่าสุด</button><button id="fullscreen">เต็มจอ</button></footer>
+  <script>
+    const canvas=document.getElementById('game'),loading=document.getElementById('loading'),notice=document.getElementById('notice');
+    const version='{{{ PRODUCT_VERSION }}}';let game;
+    canvas.addEventListener('contextmenu',event=>event.preventDefault());
+    document.getElementById('reload').onclick=()=>location.replace(location.pathname+'?v='+Date.now());
+    document.getElementById('fullscreen').onclick=()=>{if(game)game.SetFullscreen(1)};
+    function fail(message){loading.style.display='grid';notice.textContent=message;document.getElementById('progress').hidden=true}
+    const config={
+      dataUrl:'Build/{{{ DATA_FILENAME }}}',frameworkUrl:'Build/{{{ FRAMEWORK_FILENAME }}}',codeUrl:'Build/{{{ CODE_FILENAME }}}',streamingAssetsUrl:'StreamingAssets',
+      companyName:{{{ JSON.stringify(COMPANY_NAME) }}},productName:{{{ JSON.stringify(PRODUCT_NAME) }}},productVersion:version,
+      matchWebGLToCanvasSize:true,devicePixelRatio:Math.min(window.devicePixelRatio||1,2),
+      showBanner:(message,type)=>{if(type==='error')fail(message)},
+      errorHandler:message=>{fail(message);return true}
+    };
+    const loader=document.createElement('script');loader.src='Build/{{{ LOADER_FILENAME }}}';
+    loader.onerror=()=>fail('โหลดเกมไม่สำเร็จ กรุณาลองรีเฟรชอีกครั้ง');
+    loader.onload=()=>createUnityInstance(canvas,config,p=>document.getElementById('progress').value=p).then(instance=>{
+      game=instance;loading.style.display='none';canvas.focus();window.arenaGame=instance;
+    }).catch(error=>fail(String(error)));
+    document.body.appendChild(loader);
+    async function checkVersion(){try{const response=await fetch('build-info.json?t='+Date.now(),{cache:'no-store'});if(!response.ok)return;const info=await response.json();if(info.version!==version)document.getElementById('outdated').style.display='inline'}catch{}}
+    setInterval(checkVersion,60000);
+  </script>
+</body>
+</html>
